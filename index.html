@@ -1,114 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-<meta charset="UTF-8">
-
 <title>US Core Asset Dashboard</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <style>
-
 body{
-background:#0a0a0a;
-color:white;
 font-family:Arial;
-padding:40px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:20px;
-margin-bottom:40px;
-}
-
-.card{
 background:#111;
-padding:20px;
-border-radius:12px;
+color:white;
+text-align:center;
 }
-
-.price{
-color:#4ade80;
-font-size:26px;
-}
-
 table{
-width:100%;
+margin:auto;
 border-collapse:collapse;
 }
-
 td,th{
+border:1px solid #444;
 padding:10px;
-border-bottom:1px solid #333;
 }
-
 </style>
-
 </head>
 
 <body>
 
 <h1>US Core Asset Dashboard</h1>
 
-<div id="cards" class="grid"></div>
+<table>
+<tr>
+<th>Ticker</th>
+<th>Price</th>
+</tr>
 
-<canvas id="chart"></canvas>
+<tr><td>QQQ</td><td id="qqq"></td></tr>
+<tr><td>AAPL</td><td id="aapl"></td></tr>
+<tr><td>MSFT</td><td id="msft"></td></tr>
+<tr><td>NVDA</td><td id="nvda"></td></tr>
+
+</table>
 
 <script>
 
-const symbols=[
-"QQQ","AAPL","MSFT","GOOGL","AMZN","NVDA","META","TSLA"
-]
-
 async function load(){
 
-const cards=document.getElementById("cards")
+const tickers=["QQQ","AAPL","MSFT","NVDA"]
 
-for(const s of symbols){
+for(let t of tickers){
 
-const r=await fetch(
-"https://query1.finance.yahoo.com/v7/finance/quote?symbols="+s
+let r=await fetch(
+`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${t}`
 )
 
-const d=await r.json()
+let d=await r.json()
 
-const q=d.quoteResponse.result[0]
-
-const div=document.createElement("div")
-
-div.className="card"
-
-div.innerHTML=`
-<h2>${s}</h2>
-<div class="price">$${q.regularMarketPrice}</div>
-<p>PE: ${q.trailingPE}</p>
-`
-
-cards.appendChild(div)
+document.getElementById(t.toLowerCase()).innerText=
+d.quoteResponse.result[0].regularMarketPrice
 
 }
 
 }
 
 load()
-
-const ctx=document.getElementById("chart")
-
-new Chart(ctx,{
-type:"line",
-data:{
-labels:["2020","2021","2022","2023","2024"],
-datasets:[
-{
-label:"Price",
-data:[200,320,250,390,440]
-}
-]
-}
-})
 
 </script>
 
